@@ -797,7 +797,6 @@ if (typeof Object.create !== "function") {
                 isTouch;
 
             tempElem.style.cssText = "  -moz-transform:" + translate3D +
-                                  "; -ms-transform:"     + translate3D +
                                   "; -o-transform:"      + translate3D +
                                   "; -webkit-transform:" + translate3D +
                                   "; transform:"         + translate3D;

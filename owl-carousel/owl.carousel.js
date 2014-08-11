@@ -789,25 +789,30 @@ if (typeof Object.create !== "function") {
 
         checkBrowser : function () {
             var base = this,
-                translate3D = "translate3d(0px, 0px, 0px)",
-                tempElem = document.createElement("div"),
-                regex,
-                asSupport,
-                support3d,
-                isTouch;
+                  el = document.createElement('p'),
+                  has3d,
+                  transforms = {
+                        'webkitTransform':'-webkit-transform',
+                        'OTransform':'-o-transform',
+                        'msTransform':'-ms-transform',
+                        'MozTransform':'-moz-transform',
+                        'transform':'transform'
+                    };
 
-            tempElem.style.cssText = "  -moz-transform:" + translate3D +
-                                  "; -o-transform:"      + translate3D +
-                                  "; -webkit-transform:" + translate3D +
-                                  "; transform:"         + translate3D;
-            regex = /translate3d\(0px, 0px, 0px\)/g;
-            asSupport = tempElem.style.cssText.match(regex);
-            support3d = (asSupport !== null && asSupport.length >= 1);
+            document.body.insertBefore(el, null);
 
+            for (var t in transforms){
+                if( el.style[t] !== undefined ){
+                    el.style[t] = 'translate3d(1px,1px,1px)';
+                    has3d = window.getComputedStyle(el).getPropertyValue(transforms[t]);
+                }
+            }
+
+            document.body.removeChild(el);
             isTouch = "ontouchstart" in window || window.navigator.msMaxTouchPoints;
 
             base.browser = {
-                "support3d" : support3d,
+                "support3d" : (has3d !== undefined && has3d.length > 0 && has3d !== "none"),
                 "isTouch" : isTouch
             };
         },
@@ -1374,10 +1379,8 @@ if (typeof Object.create !== "function") {
                 }
             }
             base.clearEvents();
-            base.$elem.attr({
-                style: base.$elem.data("owl-originalStyles") || "",
-                class: base.$elem.data("owl-originalClasses")
-            });
+            base.$elem.attr("style", base.$elem.data("owl-originalStyles") || "");
+            base.$elem.attr("class", base.$elem.data("owl-originalClasses"));
         },
 
         destroy : function () {
